@@ -23,6 +23,7 @@ import { holdPayout, releasePayoutIfLive } from "@/lib/points/payout";
 import { planPayoutFor } from "@/lib/agent-api/plan";
 import { marketingAcceptAwards } from "@/lib/agent-api/merge";
 import { PLAN_POINTS } from "@/lib/points/rules";
+import { backfillEntries } from "@/lib/points/backfill";
 import {
   confirmationReviewerSourceKey,
   CONFIRMATION_REVIEWER_POINTS,
@@ -191,6 +192,9 @@ function payoutDb(reporters: string[]) {
         update: vi.fn(async ({ data }: { data: Record<string, unknown> }) => Object.assign(bug, data)),
       },
       deploymentReport: { findMany: vi.fn(async () => reporters.map((onBehalfOfUserId) => ({ onBehalfOfUserId }))) },
+      // An issue nobody funded: its escrow is empty, so releasing the payout moves no Ziks.
+      coinEntry: { aggregate: vi.fn(async () => ({ _sum: { amount: 0 } })) },
+      $queryRaw: vi.fn(async () => []),
     };
     return { db: db as never, bug, rows: ledger.rows, reporters };
 }
@@ -255,6 +259,10 @@ describe("the plan's award on a complex issue (#plan-review rule 13)", () => {
 });
 
 describe("when the reporter is paid", () => {
+  it("does not invent reporter rewards for an outside-board delivery, even though confirmation was waived", () => {
+    const awards = backfillEntries({ id: "imported", organisationId: "org", status: "resolved", isDeleted: false, assigneeId: "solver", reporterId: "solver", beneficiaryUserId: "solver", reward: 5, duplicateOfId: null, createdByAgentId: "filer", isConfirmed: true, outsideWork: { id: "import" } });
+    expect(awards.map((award) => award.role)).toEqual(["solver"]);
+  });
   it("is at conversion for marketing, which has no confirmation, and at confirmation for product", () => {
     expect(trackRules("marketing").reporterPaidOn).toBe("conversion");
     expect(trackRules("product").reporterPaidOn).toBe("confirmation");
