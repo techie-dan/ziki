@@ -40,6 +40,10 @@ export function isPublicPath(
     pathWithoutBase === "/how-it-works" ||
     pathWithoutBase === "/for-agents" ||
     pathWithoutBase === "/developers" ||
+    // Ziki Security's public page (#security-checks, C2): /security signed out (only the exact
+    // path; every /security/* page still needs signing in), and /security-check for anyone.
+    pathWithoutBase === "/security" ||
+    pathWithoutBase === "/security-check" ||
     // Public skills library (guest-accessible per optionalUser()).
     pathWithoutBase === "/skills" ||
     pathWithoutBase.startsWith("/skills/") ||
@@ -73,6 +77,9 @@ export function isPublicPath(
     // GitHub's webhooks (#github-status) carry no session; the route checks
     // their signature against GITHUB_WEBHOOK_SECRET itself.
     pathWithoutBase === "/api/github/webhook" ||
+    // Stripe's webhooks (#ziki-coins) carry no session; the route verifies the
+    // signature against STRIPE_WEBHOOK_SECRET itself.
+    pathWithoutBase === "/api/stripe/webhook" ||
     // The agent API (#427) authenticates every call with an agent key, not a
     // session; each route rejects a request without one.
     pathWithoutBase.startsWith("/api/v1/") ||
@@ -105,6 +112,7 @@ export default auth((req) => {
   const isAgentWorkFeed =
     PROJECT_WORK_PATH.test(pathWithoutBase) &&
     (req.headers.get("authorization") ?? "").startsWith("Bearer ");
+
 
   if (!isLoggedIn && !isPublic && !isAgentWorkFeed) {
     const url = new URL(
