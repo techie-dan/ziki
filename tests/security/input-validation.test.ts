@@ -8,7 +8,9 @@ import { agentCommentSchema } from "@/lib/agent-api/issues";
 import { bidSchema } from "@/lib/agent-api/bid";
 import { deliveryBodySchema } from "@/lib/agent-api/delivery";
 import { testVerdictBodySchema } from "@/lib/agent-api/test-verdict";
+import { addRowsSchema } from "@/lib/proof";
 import { isScanned, preflight, scanFile } from "@/lib/security/preflight-scan";
+import { sitePageUrl } from "@/lib/marketing/site-reader";
 
 /** Invalid payloads and unsafe input are rejected before they reach the database or the page. */
 const valid = { title: "Login button broken", description: "Clicking sign in does nothing on mobile." };
@@ -123,9 +125,17 @@ describe("judgement proof (#deeper-testing)", () => {
       expect(testVerdictBodySchema.safeParse({ ...verdict, proof: { checks: { phone: entry } } }).success).toBe(false);
     }
     expect(testVerdictBodySchema.safeParse({ ...verdict, proof: { rating: "fine" } }).success).toBe(false);
-    // A flood of entries isn't proof: a handful of checks apply to an issue.
-    const flood = Object.fromEntries(Array.from({ length: 31 }, (_, i) => [`check-${i}`, { result: "pass", attachmentId: "att_1", shows: "The composer at 375px." }]));
-    expect(testVerdictBodySchema.safeParse({ ...verdict, proof: { checks: flood } }).success).toBe(false);
+    // A flood of entries isn't proof: a handful of checks apply to an issue, and a card holds at most 12 squares.
+    const checks = Object.fromEntries(Array.from({ length: 31 }, (_, i) => [`check-${i}`, { result: "pass", attachmentId: "att_1", shows: "The composer at 375px." }]));
+    expect(testVerdictBodySchema.safeParse({ ...verdict, proof: { checks } }).success).toBe(false);
+    const flood = Object.fromEntries(Array.from({ length: 61 }, (_, i) => [`row-${i}`, { result: "pass", attachmentId: "att_1", shows: "The composer at 375px." }]));
+    expect(testVerdictBodySchema.safeParse({ ...verdict, proof: { squares: flood } }).success).toBe(false);
+  });
+
+  it("refuses a beyond row without its kind, and rows past the limit", () => {
+    expect(addRowsSchema.safeParse({ rows: [{ text: "Two tabs at once", source: "beyond" }] }).success).toBe(false);
+    expect(addRowsSchema.safeParse({ rows: [{ text: "Two tabs at once", source: "beyond", kind: "two_at_once" }] }).success).toBe(true);
+    expect(addRowsSchema.safeParse({ rows: Array.from({ length: 13 }, () => ({ text: "A criterion", source: "criteria" })) }).success).toBe(false);
   });
 });
 
@@ -230,5 +240,30 @@ describe("preflight", () => {
     expect(result.state).toBe("warning");
     expect(result.findings).toHaveLength(1);
     expect(result.scanned).toBe(2);
+  });
+});
+
+describe("the Marketing assistant's website reader (#marketing-assistant)", () => {
+  const site = "https://acme.dev";
+
+  it("reads pages on the project's own site, with or without www", () => {
+    expect(sitePageUrl(site, "/pricing")?.toString()).toBe("https://acme.dev/pricing");
+    expect(sitePageUrl(site, "pricing")?.toString()).toBe("https://acme.dev/pricing");
+    expect(sitePageUrl(site, "https://www.acme.dev/about#team")?.toString()).toBe("https://www.acme.dev/about");
+  });
+
+  it("refuses any other address the model asks for", () => {
+    for (const path of [
+      "https://evil.com/",
+      "//evil.com/pricing",
+      "https://acme.dev.evil.com/",
+      "http://acme.dev/",
+      "https://user:pass@acme.dev/",
+      "https://acme.dev:8443/",
+      "https://169.254.169.254/latest/meta-data",
+      "file:///etc/passwd",
+    ]) {
+      expect(sitePageUrl(site, path)).toBeNull();
+    }
   });
 });
