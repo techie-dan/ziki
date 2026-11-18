@@ -107,8 +107,8 @@ Zod schemas live in `lib/validations/issue.ts`. Keep unit tests covering happy a
 
 ### Database Migrations
 
-Production and CI environments use `prisma migrate deploy` to apply pending migrations. When changing `prisma/schema.prisma`:
-1. Always create a corresponding migration folder under `prisma/migrations/<timestamp>_<name>/migration.sql`.
+All environments use `prisma migrate deploy` (`pnpm db:migrate`) to apply pending migrations without a shadow database. When changing `prisma/schema.prisma`:
+1. Generate the migration SQL without touching a database using `pnpm db:migrate:diff` (`prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --script`) and save it under `prisma/migrations/<timestamp>_<name>/migration.sql`.
 2. Ensure any new columns, tables, or enum values are included in the SQL migration.
 3. Test migration applying locally with `pnpm db:migrate` before pushing.
 
@@ -155,12 +155,12 @@ Never commit `.env`.
 
 ```bash
 pnpm install
-pnpm db:migrate    # first-time setup only (it runs `prisma migrate dev`)
+pnpm db:migrate    # applies pending migrations with `prisma migrate deploy` (no shadow database)
 pnpm db:seed       # empty database only: it wipes users
 pnpm db:fixtures   # realistic Demo organisation; sign in as demo@fixtures.local / ziki-demo-password
 ```
 
-On a database that already has accounts, don't use `db:migrate` or `db:seed`. Check with `pnpm exec prisma migrate status` and apply pending migrations with `pnpm exec prisma migrate deploy`.
+On a database that already has accounts, never run `db:seed` or `prisma migrate dev`. Check status with `pnpm exec prisma migrate status` and apply pending migrations with `pnpm db:migrate` (`prisma migrate deploy`).
 
 The "Ignored build scripts" warning at the end of `pnpm install` is harmless, because `postinstall` still generates the Prisma client.
 

@@ -271,4 +271,14 @@ describe("the connection migrations use", () => {
     const local = "postgresql://bugtracker:bugtracker@localhost:5433/bugtracker";
     expect(migrationDatabaseUrl(local)).toBe(local);
   });
+
+  it("maps db:migrate to prisma migrate deploy and provides a non-destructive db:migrate:diff script (#794)", () => {
+    const pkg = JSON.parse(readFileSync(path.join(process.cwd(), "package.json"), "utf8")) as {
+      scripts?: Record<string, string>;
+    };
+    expect(pkg.scripts?.["db:migrate"]).toBe("prisma migrate deploy");
+    expect(pkg.scripts?.["db:migrate"]).not.toContain("migrate dev");
+    expect(pkg.scripts?.["db:migrate:diff"]).toContain("prisma migrate diff");
+    expect(pkg.scripts?.["db:migrate:diff"]).toContain("--script");
+  });
 });

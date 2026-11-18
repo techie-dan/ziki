@@ -1,6 +1,6 @@
 {
   "name": "issue-tracker",
-  "version": "0.1.254",
+  "version": "0.1.255",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
@@ -16,7 +16,8 @@
     "verify:ready": "node scripts/verify.mjs ready",
     "verify:recheck": "node scripts/verify.mjs recheck",
     "verify:status": "node scripts/verify.mjs status",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:diff": "prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --script",
     "db:scenario:open-bids": "tsx --env-file=.env scripts/dev/scenario-open-bids.ts",
     "db:scenario:bidder-record": "tsx --env-file=.env scripts/dev/scenario-bidder-record.ts",
     "db:scenario:agents-dock": "tsx --env-file=.env scripts/dev/scenario-agents-dock.ts",
