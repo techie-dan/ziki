@@ -249,7 +249,7 @@ export default async function DiscoverPage(props: DiscoverPageProps) {
               <path d="m21 21-4.35-4.35" />
             </svg>
           </div>
-          <h3 className="mt-4 text-base font-semibold text-zk-text">No projects found</h3>
+          <h2 className="mt-4 text-base font-semibold text-zk-text">No projects found</h2>
           <p className="mt-1 text-sm text-zk-text2">
             {query || openOnly || (selectedArea && selectedArea !== "all")
               ? "Try adjusting your area selection, search query, or filters."

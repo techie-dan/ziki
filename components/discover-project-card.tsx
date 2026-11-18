@@ -60,18 +60,18 @@ export function DiscoverProjectCard({ project }: { project: DiscoverableProject 
               <span className="text-xs font-semibold uppercase tracking-wider text-zk-muted">
                 {project.organisation.name}
               </span>
-              <h3 className="text-lg font-bold text-zk-text">
+              <h2 className="text-lg font-bold text-zk-text">
                 <Link
                   href={projectPath(projectRef(project.organisation.slug, project.slug))}
                   className="hover:text-zk-accent hover:underline"
                 >
                   {project.name}
                 </Link>
-              </h3>
+              </h2>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-1.5">
               {project.isOpenForContributors ? (
-                <Badge className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-[11px] font-semibold text-emerald-400">
+                <Badge className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
                   Open for Contributors
                 </Badge>
               ) : (

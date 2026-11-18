@@ -5,6 +5,7 @@
   --line: #e0e6f1;
   --surface: #f5f7fc;
   --green: #3978f6;
+  --green-text: #2563eb;
   --green-bright: #3978f6;
   --green-soft: #eaf2ff;
   --dark-green: #0b1733;
@@ -19,6 +20,7 @@
   --line: #263b63;
   --surface: #111f3d;
   --green: #5991ff;
+  --green-text: #5991ff;
   --green-bright: #8fc9ff;
   --green-soft: #172f5e;
   --dark-green: #071127;
@@ -86,7 +88,7 @@
 .ziki-homepage .section { margin: 0 auto; max-width: 1180px; padding: 130px 30px; }
 .ziki-homepage .workflow { padding-top: 112px; }
 .ziki-homepage .section-heading { margin: 0 auto 54px; max-width: 700px; text-align: center; }
-.ziki-homepage .section-kicker { color: var(--green); display: block; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; margin-bottom: 16px; text-transform: uppercase; }
+.ziki-homepage .section-kicker { color: var(--green-text); display: block; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 12px; font-weight: 500; letter-spacing: .08em; margin-bottom: 16px; text-transform: uppercase; }
 .ziki-homepage .section-heading h2, .ziki-homepage .control-copy h2, .ziki-homepage .points-copy h2, .ziki-homepage .closing-cta h2 { font-size: clamp(37px, 4.4vw, 55px); font-weight: 500; letter-spacing: -.05em; line-height: 1.04; }
 .ziki-homepage .section-heading p { color: var(--muted); font-size: 16px; line-height: 1.6; margin: 20px auto 0; max-width: 610px; }
 .ziki-homepage .workflow-grid { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
@@ -278,6 +280,7 @@
   --line: #263b63;
   --surface: #111f3d;
   --green: #5991ff;
+  --green-text: #5991ff;
   --green-bright: #8fc9ff;
   --green-soft: #172f5e;
   --dark-green: #071127;
@@ -568,7 +571,7 @@
 
 .ziki-homepage .path-card { display: flex; flex-direction: column; padding: 26px 24px 24px; }
 .ziki-homepage .path-card .lifecycle-icon { margin: 0 0 18px; }
-.ziki-homepage .path-kicker { color: var(--green); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.ziki-homepage .path-kicker { color: var(--green-text); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
 .ziki-homepage .path-card h3 { font-size: 20px; margin: 10px 0 10px; }
 .ziki-homepage .path-card p { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 0; }
 .ziki-homepage .path-cta { align-items: center; display: inline-flex; font-size: 14px; font-weight: 700; gap: 6px; margin-top: auto; padding-top: 22px; }

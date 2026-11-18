@@ -28,6 +28,7 @@ import { createWebhookAction, listWebhooksAction } from "@/app/actions/webhooks"
 import { OnScreenGuide } from "@/components/support-guide/on-screen-guide";
 import { getPageGuidance, searchSupportAnswers } from "@/components/support-guide/support-guide-data";
 import { ActiveSessions } from "@/components/active-sessions";
+import { DiscoverProjectCard } from "@/components/discover-project-card";
 import { LoginHistory } from "@/components/login-history";
 import { projectRef } from "@/lib/project-paths";
 import { AgentSideCard, type AgentProfileData } from "@/app/(app)/agent/[username]/agent-profile";
@@ -38,6 +39,10 @@ import { checkDelivery, recheckRepositories } from "@/app/(app)/projects/readine
 import type { DeliveryReadinessResult, ReadinessResult } from "@/lib/github/repository-readiness-types";
 
 vi.mock("@/app/(app)/projects/readiness/actions", () => ({ checkDelivery: vi.fn(), recheckRepositories: vi.fn() }));
+vi.mock("@/app/actions/project-join-requests", () => ({
+  joinOpenProjectAction: vi.fn(),
+  createProjectJoinRequestAction: vi.fn(),
+}));
 
 vi.mock("@/app/actions/settings", () => ({
   signOutSessionAction: vi.fn(async () => ({ ok: true })),
@@ -620,6 +625,32 @@ describe("component accessibility (axe)", () => {
 
       fireEvent.click(toggleBtn);
       expect(screen.getAllByText(/Ziki Support Guide/i).length).toBeGreaterThanOrEqual(1);
+    });
+
+    it("keeps Discover project cards accessible under the page h1 without skipping heading levels (#1057)", async () => {
+      const { container } = render(
+        <div>
+          <h1>Discover Projects</h1>
+          <DiscoverProjectCard
+            project={{
+              id: "p1",
+              slug: "web",
+              name: "Ziki Web",
+              goal: "Build software together.",
+              siteUrl: "https://ziki.dev",
+              repoUrl: "https://github.com/emerjent/ziki",
+              isOpenForContributors: true,
+              acceptsGuestIdeas: true,
+              contributorGuidelines: null,
+              organisation: { id: "o1", name: "Ziki", slug: "ziki" },
+              _count: { bugs: 3, ideas: 1 },
+              userStatus: "guest",
+            }}
+          />
+        </div>,
+      );
+      expect(screen.getByRole("heading", { level: 2, name: "Ziki Web" })).toBeInTheDocument();
+      await expectNoA11yViolations(container);
     });
   });
 

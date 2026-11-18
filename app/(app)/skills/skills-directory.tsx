@@ -257,7 +257,7 @@ export function SkillsDirectory({
                     <button
                       type="button"
                       onClick={() => setSelectedCategory(skill.category)}
-                      className="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider hover:underline hover:text-blue-700 dark:hover:text-blue-300 text-left transition cursor-pointer"
+                      className="inline-flex min-h-6 items-center text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider hover:underline hover:text-blue-700 dark:hover:text-blue-300 text-left transition cursor-pointer"
                       title={`Filter by ${skill.categoryLabel}`}
                     >
                       {skill.categoryLabel}
@@ -280,7 +280,7 @@ export function SkillsDirectory({
                           key={tag}
                           type="button"
                           onClick={() => setSearchQuery(tag)}
-                          className="rounded-md bg-zk-chip hover:bg-zk-border px-2 py-0.5 text-[10px] font-medium text-zk-muted hover:text-zk-text transition cursor-pointer"
+                          className="inline-flex min-h-6 items-center rounded-md bg-zk-chip hover:bg-zk-border px-2 py-0.5 text-[10px] font-medium text-zk-muted hover:text-zk-text transition cursor-pointer"
                           title={`Search for #${tag}`}
                         >
                           #{tag}
@@ -347,7 +347,7 @@ export function SkillsDirectory({
 
                   <Link
                     href={`/skills/${skill.slug}`}
-                    className="flex w-full items-center justify-center gap-1.5 text-center text-xs font-medium text-zk-muted hover:text-blue-600 transition py-0.5"
+                    className="inline-flex min-h-6 w-full items-center justify-center gap-1.5 text-center text-xs font-medium text-zk-muted hover:text-blue-600 transition py-0.5"
                   >
                     <span>View Details &amp; Spec</span>
                     <span>→</span>
