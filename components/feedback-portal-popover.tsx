@@ -57,10 +57,10 @@ export function FeedbackPortalPopover({
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-zk-accent ${
+        className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-zk-accent ${
           open
-            ? "border-electric-blue-strong bg-electric-blue-strong/10 text-electric-blue-strong"
-            : "border-zk-border bg-zk-surface text-zk-text hover:bg-zk-chip"
+            ? "text-zk-text"
+            : "text-zk-muted hover:text-zk-text"
         }`}
       >
         <svg
@@ -74,10 +74,9 @@ export function FeedbackPortalPopover({
           strokeLinejoin="round"
           aria-hidden="true"
         >
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
-        Feedback portal
+        Feedback
       </button>
 
       {open ? (
@@ -139,16 +138,6 @@ export function FeedbackPortalPopover({
               className="inline-flex min-h-9 items-center justify-center gap-1 rounded-xl border border-zk-border bg-zk-surface px-3 py-2 text-xs font-semibold text-zk-text transition hover:bg-zk-chip"
             >
               Open portal <span aria-hidden="true">↗</span>
-            </Link>
-          </div>
-
-          <div className="mt-3.5 border-t border-zk-divider pt-3">
-            <Link
-              href={portalPath}
-              onClick={() => setOpen(false)}
-              className="inline-block text-xs font-semibold text-electric-blue-strong hover:underline"
-            >
-              Organization feedback portal
             </Link>
           </div>
         </div>
