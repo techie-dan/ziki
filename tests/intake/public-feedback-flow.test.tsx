@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ project: vi.fn(), user: vi.fn() }));
 vi.mock("@/lib/public-projects", () => ({ findFeedbackProject: mocks.project }));
+vi.mock("@/lib/public-feedback-ideas", () => ({ listPublicFeedbackIdeas: vi.fn().mockResolvedValue([]) }));
 vi.mock("@/lib/auth-helpers", () => ({ optionalUser: mocks.user }));
 vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("not-found"); } }));
 vi.mock("@/components/public-product-overview", () => ({

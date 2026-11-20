@@ -2,6 +2,7 @@ import "server-only";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { optionalUser } from "@/lib/auth-helpers";
+export { feedbackSubmitterName } from "@/lib/public-feedback-types";
 
 const feedbackIdeaSelect = {
   number: true, title: true, summary: true, description: true,
@@ -10,7 +11,7 @@ const feedbackIdeaSelect = {
   publicSubmission: { select: { user: { select: { name: true } } } },
   type: { select: { name: true } },
   project: { select: { name: true, slug: true } },
-  _count: { select: { verdicts: true } },
+  _count: { select: { verdicts: true, attachments: true } },
 } satisfies Prisma.IdeaSelect;
 
 export type FeedbackIdea = Prisma.IdeaGetPayload<{ select: typeof feedbackIdeaSelect }>;
@@ -20,7 +21,7 @@ export type FeedbackIdea = Prisma.IdeaGetPayload<{ select: typeof feedbackIdeaSe
  * Agent verdicts are read here; this portal never casts them on a visitor's behalf.
  */
 export async function listPublicFeedbackIdeas(orgSlug: string, options: {
-  projectSlug?: string; projectSlugs?: string[]; query?: string; number?: number;
+  projectSlug?: string; projectSlugs?: string[]; query?: string; number?: number; source?: "public" | Prisma.StringFilter | Prisma.NestedStringFilter;
 } = {}): Promise<FeedbackIdea[]> {
   const user = await optionalUser();
   const visibleProject: Prisma.ProjectWhereInput = {
@@ -36,7 +37,9 @@ export async function listPublicFeedbackIdeas(orgSlug: string, options: {
   };
   return prisma.idea.findMany({
     where: {
-      source: "public", isDeleted: false, track: "product",
+      source: options.source ?? "public",
+      isDeleted: false,
+      track: "product",
       securityFinding: { is: null },
       organisation: { slug: orgSlug, archivedAt: null },
       project: visibleProject,
@@ -50,11 +53,4 @@ export async function listPublicFeedbackIdeas(orgSlug: string, options: {
     orderBy: [{ createdAt: "desc" }, { number: "desc" }],
     take: 50,
   });
-}
-
-export function feedbackSubmitterName(idea: Pick<FeedbackIdea, "reporter" | "publicSubmission">): string {
-  const accountName = idea.publicSubmission?.user.name?.trim();
-  if (accountName) return accountName;
-  const name = idea.reporter.name?.trim();
-  return name && !/ public reporter$/i.test(name) ? name : "Guest";
 }

@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { findFeedbackProject } from "@/lib/public-projects";
 import { publicFeedbackPath } from "@/lib/public-project-paths";
 import { PublicContributorForm } from "@/components/public-contributor-form";
+import { listPublicFeedbackIdeas } from "@/lib/public-feedback-ideas";
 import { NOINDEX } from "@/lib/seo/site";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,13 @@ export default async function ProjectFeedbackPortalPage({
   if (!project) notFound();
 
   if (query.idea !== undefined) return <PublicFeedbackIdeaDetail project={ref} number={Number(query.idea)} />;
-  if (query.type !== "problem" && query.type !== "improvement") return <PublicProductOverview product={project} />;
+  if (query.type !== "problem" && query.type !== "improvement") {
+    const ideas = await listPublicFeedbackIdeas(ref.orgSlug, {
+      projectSlug: ref.projectSlug,
+      source: { in: ["public", "internal"] },
+    });
+    return <PublicProductOverview product={project} ideas={ideas} />;
+  }
   const user = await optionalUser();
   const orgFeedbackHref = publicFeedbackPath(ref);
 

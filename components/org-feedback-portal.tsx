@@ -3,7 +3,6 @@
 import { PortalSearch } from "@/components/portal-search";
 import { useState } from "react";
 import Link from "next/link";
-import { FEEDBACK_PLATFORMS } from "@/lib/feedback-product-info";
 import { publicFeedbackPath } from "@/lib/public-project-paths";
 
 export type OrgFeedbackProjectCardItem = {
@@ -13,89 +12,6 @@ export type OrgFeedbackProjectCardItem = {
   description: string;
   platforms?: string[];
 };
-
-function ProjectPlatformIcon({ slug, name }: { slug: string; name: string }) {
-  const key = (slug || name).trim().toLowerCase();
-  if (key === "web" || key.endsWith("-web")) {
-    return (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-zk-text2"
-        aria-hidden="true"
-      >
-        <rect x="3" y="4" width="18" height="16" rx="2.5" />
-        <path d="M3 9h18" />
-        <circle cx="6.5" cy="6.5" r="0.6" fill="currentColor" />
-        <circle cx="9" cy="6.5" r="0.6" fill="currentColor" />
-        <circle cx="11.5" cy="6.5" r="0.6" fill="currentColor" />
-      </svg>
-    );
-  }
-  if (key === "mobile" || key.endsWith("-mobile")) {
-    return (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-zk-text2"
-        aria-hidden="true"
-      >
-        <rect x="6" y="2.5" width="12" height="19" rx="2.5" />
-        <path d="M10.5 5.5h3" />
-        <circle cx="12" cy="18.5" r="0.7" fill="currentColor" />
-      </svg>
-    );
-  }
-  if (key === "desktop" || key.endsWith("-desktop")) {
-    return (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-zk-text2"
-        aria-hidden="true"
-      >
-        <rect x="2.5" y="3.5" width="19" height="13" rx="2" />
-        <path d="M8 20.5h8" />
-        <path d="M12 16.5v4" />
-      </svg>
-    );
-  }
-  return (
-    <svg
-      width="36"
-      height="36"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-zk-text2"
-      aria-hidden="true"
-    >
-      <rect x="3" y="4" width="18" height="16" rx="2.5" />
-      <path d="M8 10h8M8 14h5" />
-    </svg>
-  );
-}
 
 export function OrgFeedbackPortal({
   orgSlug,
@@ -111,11 +27,9 @@ export function OrgFeedbackPortal({
   returnHref?: string;
 }) {
   const [query, setQuery] = useState(initialQuery);
-  const [selectedProject, setSelectedProject] = useState("all");
   const needle = query.trim().toLowerCase();
   const filtered = projects.filter(project =>
-    (selectedProject === "all" || project.platforms?.includes(selectedProject)) &&
-    (!needle || [project.name, project.description, project.slug].some(value => value.toLowerCase().includes(needle)))
+    !needle || [project.name, project.description, project.slug].some(value => value.toLowerCase().includes(needle))
   );
 
   return (
@@ -136,16 +50,9 @@ export function OrgFeedbackPortal({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <nav aria-label="Filter projects" className="flex flex-wrap gap-2">
-            {[{ slug: "all", name: "All projects" }, ...FEEDBACK_PLATFORMS].map(project => (
-              <button key={project.slug} type="button" onClick={() => setSelectedProject(project.slug)} aria-pressed={selectedProject === project.slug} className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold ${selectedProject === project.slug ? "border-zk-accent bg-zk-tint text-zk-accent" : "border-zk-border bg-zk-surface text-zk-text2 hover:bg-zk-chip"}`}>{project.slug !== "all" ? <span className="inline-flex [&_svg]:h-4 [&_svg]:w-4"><ProjectPlatformIcon slug={project.slug} name={project.name} /></span> : null}{project.name}</button>
-            ))}
-          </nav>
-          <div className="flex max-w-full flex-wrap items-center justify-end gap-2">
+        <div className="flex max-w-full flex-wrap items-center justify-end gap-2">
           <Link href={`/${encodeURIComponent(orgSlug)}/feedback?view=ideas`} className="inline-flex min-h-10 items-center rounded-xl border border-zk-border bg-zk-surface px-4 py-2 text-sm font-semibold text-zk-accent hover:bg-zk-chip">View all feedback ideas →</Link>
-            <PortalSearch label="Search projects" value={query} onValueChange={setQuery} />
-          </div>
+          <PortalSearch label="Search projects" value={query} onValueChange={setQuery} />
         </div>
 
 
@@ -186,7 +93,6 @@ export function OrgFeedbackPortal({
                 </tbody>
               </table>
             </div>
-            <div className="border-t border-zk-divider bg-zk-card px-5 py-3 text-xs text-zk-muted">Showing {filtered.length} of {projects.length} projects</div>
           </div>
         )}
       </div>

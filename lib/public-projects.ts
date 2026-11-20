@@ -2,7 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import type { PublicProjectRef } from "@/lib/public-project-paths";
-import { feedbackProductPlatforms, feedbackProductSummary } from "@/lib/feedback-product-info";
+import { defaultProductSummary, feedbackProductPlatforms, feedbackProductSummary } from "@/lib/feedback-product-info";
 
 export function publicTrackingTokenHash(token: string): string {
   return createHash("sha256").update(token).digest("hex");
@@ -151,7 +151,7 @@ export async function listOrgFeedbackProjects(orgSlug: string) {
     name: project.name,
     description: project.visibility === "public" && project.goal?.trim()
       ? feedbackProductSummary(project.goal)
-      : "The team has not published a product summary yet.",
+      : defaultProductSummary(project.slug, project.name),
     platforms: feedbackProductPlatforms(project),
     visibility: project.visibility,
   }));

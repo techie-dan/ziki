@@ -4,6 +4,17 @@ export const FEEDBACK_PLATFORMS = [
   { slug: "desktop", name: "Desktop" },
 ] as const;
 
+export const DEFAULT_PRODUCT_DESCRIPTIONS: Record<string, string> = {
+  web: "Cloud-based collaboration hub for real-time task management, project roadmaps, and team workflows accessible directly in modern web browsers.",
+  mobile: "Companion app for iOS and Android providing instant triage notifications, offline notes, voice capture, and on-the-go idea voting.",
+  desktop: "High-performance native client for macOS and Windows with offline-first synchronization, global keyboard shortcuts, and deep developer tooling.",
+};
+
+export function defaultProductSummary(slug: string, name: string): string {
+  const key = (slug || name).trim().toLowerCase();
+  return DEFAULT_PRODUCT_DESCRIPTIONS[key] ?? "The team has not published a product summary yet.";
+}
+
 export function feedbackProductPlatforms(product: {
   slug: string; name: string; areas?: readonly { slug: string; name: string }[];
 }): string[] {
